@@ -194,12 +194,13 @@ WHERE dtNasc > (
 
 -- 3. Faça uma consulta que selecione o nome e a data de nascimento dos funcionários
 -- com idade superior a 21 anos que não são gerentes.
-Select 
-  nome,
-  TIMESTAMPDIFF(YEAR, dtNasc, NOW()) AS idade
-from funcionario
-
 SELECT nome, dtNasc
 FROM funcionario
-WHERE (YEAR(CURRENT_DATE) - YEAR(dtNasc)) > 50 AND codigo NOT IN 
+WHERE (YEAR(CURRENT_DATE) - YEAR(dtNasc)) > 21 AND codigo NOT IN 
     (SELECT codGerente FROM departamento)
+
+-- 4. Faça uma consulta que selecione o nome, o salário e o departamento dos funcionários
+-- que não são gerentes, ordenando pelo Código do Departamento.
+SELECT func.nome, func.salario, depto.descricao as departamento 
+FROM funcionario func
+inner join departamento as depto on func.codigo = depto.codGerente
