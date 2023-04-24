@@ -204,3 +204,51 @@ WHERE (YEAR(CURRENT_DATE) - YEAR(dtNasc)) > 21 AND codigo NOT IN
 SELECT func.nome, func.salario, depto.descricao as departamento 
 FROM funcionario func
 inner join departamento as depto on func.codigo = depto.codGerente
+
+
+-- quest01. Faça uma consulta que selecione a sigla do departamneto, o nome do gerente, 
+-- o salario do gerente, a sigla do departamento ao qual o gerente pertence, todos os 
+-- departamentos devem ser listados mesmo que eles não tenham gerentes.
+select d.sigla, g.nome, g.salario, dg.sigla
+from departamento d left join funcionario g on d.codGerente = g.codigo, departamento dg
+where g.codDepto = dg.codigo;
+
+-- quest02. Explique que alterações no esquema relacional abaixo poderia ser feita para 
+-- acrescentar informações sobre o historico de gerentes do departamento e informação so gerente atual.
+-- Acidionaria uma tabela historicoGerentes(codDepto, codGerente, data_inicio, data_fim)
+-- As informações do gerente atual poderia ficar nesta tabela acrescentando uma linha sem data_fim.
+
+
+-- quest03. Faça uma consulta que selecione a sigla do departamento, o nome do gerente a quantidade de projetos
+-- e a quantitade de atividades do departamento. Faça uma view para calcular a quantidade de atividades de um projeto,
+-- que retorne o código do projeto, o nome do projeto, o codigo do departamento do projeto e o numero de atividades do 
+-- do projeto
+
+create view ProjetoAtiv as 
+select p.codigo, p.nome, p.codDepto, count(a.descricao) as NumAtividade
+from projeto p, atividade a
+where p.codigo = a.codProjeto
+group by p.nome; 
+select d.sigla, g.nome, count(p.codigo) as NumProjeto, sum(p.NumAtividade)
+from departamento d left join funcionario g on d.codGerente = g.codigo, ProjetoAtiv p
+where p.codDepto = d.codigo
+group by d.sigla;
+
+-- quest04. Crie uma visão que forneça o codigo do funcionario, o nome do funcionario, 
+-- o codigo do departamento e a sigla do departamento.
+create view funcInfo(codigo, func, codDepto, siglaDepto) as 
+select f.codigo, f.nome, d.codigo, d.sigla
+from funcionario f left join departamento d on f.codDepto = d.codigo;
+
+
+-- quest05. Faça uma sequência numerica em sql, que começa em 1 e incrementando em 1 
+-- a cada execução. Depois, crie uma tabela Contato que contenha os atributos codigo, nome, dtNascimento.
+-- Faça o codigo utilizar a sequencia para incrementar o valor (equivalente a usar outo_increment).
+create sequencia seq;
+
+create table contato (
+	codigo int default (next value for seq),
+	nome varchar(100),
+	dtNascimento date,
+	primary key (codigo)
+);
