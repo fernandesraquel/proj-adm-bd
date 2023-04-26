@@ -1,3 +1,4 @@
+-- Desabilitar Foreign Keys
 SET FOREIGN_KEY_CHECKS=0; 
 
 -- Criando a tabela de funcionário
@@ -11,9 +12,43 @@ CREATE TABLE funcionario (
   FOREIGN KEY (cod_depto) REFERENCES departamento(codigo)
 );
 
--- Inserindo um novo funcionário
-INSERT INTO funcionario (nome, sexo, dt_nasc, salario, cod_depto)
-VALUES ('José', 'M', '1990-01-01', 5000.00, 1),
-       ('Raquel', 'F', '1987-02-05', 3000.00, 2),
-       ('Annielly', 'F', '1989-06-02', 7000.00, 1),
-       ('Fábio', 'M', '1992-02-08', 1000.00, 1);
+-- Criando a tabela de departamento
+CREATE TABLE departamento (
+  codigo int AUTO_INCREMENT PRIMARY KEY,
+  descricao VARCHAR(100),
+  cod_gerente INT,
+  FOREIGN KEY (cod_gerente) REFERENCES funcionario(codigo)
+);
+
+-- Criando a tabela de projeto
+CREATE TABLE projeto (
+  codigo int AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50),
+  descricao VARCHAR(200),
+  cod_depto INT,
+  cod_responsavel INT,
+  data_inicio DATE,
+  data_fim DATE,
+  FOREIGN KEY (cod_depto) REFERENCES departamento(codigo),
+  FOREIGN KEY (cod_responsavel) REFERENCES funcionario(codigo)
+);
+
+-- Criando a tabela de atividade
+CREATE TABLE atividade (
+  codigo int AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50),
+  descricao VARCHAR(200),
+  cod_responsavel INT,
+  data_inicio DATE,
+  data_fim DATE,
+  FOREIGN KEY (cod_responsavel) REFERENCES funcionario(codigo)
+);
+
+-- Criando a tabela de relacionamento entre atividade e projeto
+CREATE TABLE atividade_projeto (
+  cod_projeto INT,
+  cod_atividade INT,
+  PRIMARY KEY (cod_projeto, cod_atividade),
+  FOREIGN KEY (cod_projeto) REFERENCES projeto(codigo),
+  FOREIGN KEY (cod_atividade) REFERENCES atividade(codigo)
+);
